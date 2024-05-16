@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management Board</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #ffffff, #f2f7ff); /* Subtle blue gradient background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1400px; /* Increased max-width for the container */
+            padding: 20px;
+        }
+
+        .create-task-btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .create-task-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .card-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            width: 400px; /* Increased card width */
+            height: calc(2/3 * 100vh); /* 2/3 of the screen height */
+            background-color: #fff;
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Increased box shadow */
+            display: flex;
+            flex-direction: column; /* Arrange content in a column */
+            justify-content: flex-start; /* Align content to the top */
+            align-items: flex-start; /* Align content to the left */
+            padding: 20px; /* Add padding for content */
+            font-size: 16px; /* Font size for card content */
+            margin-right: 20px; /* Increased distance between cards */
+            transition: box-shadow 0.3s ease; /* Smooth transition for box shadow */
+            cursor: pointer; /* Show pointer cursor on hover */
+        }
+
+        .card:last-child {
+            margin-right: 0;
+        }
+
+        .card:hover {
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3); /* Adjusted box shadow on hover */
+        }
+
+        .card.drag-over {
+            background-color: #f0f0f0 !important; /* Lighter background color on drag over */
+        }
+
+        .task {
+            background-color: #e6e6e6;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box; /* Include padding in the width calculation */
+            transition: background-color 0.3s ease; /* Smooth transition for background color */
+        }
+
+        .task:hover {
+            background-color: #d9d9d9;
+        }
+
+        .task-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .task-subtext {
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5); /* Black background with transparency */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border-radius: 5px;
+            width: 80%;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Adjust modal input styles */
+        .modal-content input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Adjust modal button styles */
+        .modal-content button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+        }
+
+        .modal-content button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="create-task-btn" onclick="openModal()">Create Task</button>
+        <div class="card-container">
+            <div class="card" id="todo-column" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+                <h2>To-Do</h2>
+            </div>
+            <div class="card" id="in-progress-column" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+                <h2>In Progress</h2>
+            </div>
+            <div class="card" id="review-column" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+                <h2>Review</h2>
+            </div>
+            <div class="card" id="done-column" ondrop="drop(event)" ondragover="allowDrop(event)" ondragenter="dragEnter(event)" ondragleave="dragLeave(event)">
+                <h2>Done</h2>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <h2>Create Task</h2>
+                <label for="taskHeader">Task Header:</label>
+                <input type="text" id="taskHeader" placeholder="Enter task header">
+                <label for="taskSubtext">Task Subtext:</label>
+                <input type="text" id="taskSubtext" placeholder="Enter task subtext">
+                <button onclick="addTask()">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function allowDrop(event) {
+            event.preventDefault();
+        }
+
+        function drag(event) {
+            event.dataTransfer.setData('text/plain', event.target.id);
+        }
+
+        function drop(event) {
+            event.preventDefault();
+            const taskId = event.dataTransfer.getData('text/plain');
+            const task = document.getElementById(taskId);
+            event.target.appendChild(task);
+            event.target.classList.remove('drag-over');
+        }
+
+        function dragEnter(event) {
+            event.preventDefault();
+            event.target.classList.add('drag-over');
+        }
+
+        function dragLeave(event) {
+            event.preventDefault();
+            event.target.classList.remove('drag-over');
+        }
+
+        function openModal() {
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        function addTask() {
+            const taskHeader = document.getElementById('taskHeader').value;
+            const taskSubtext = document.getElementById('taskSubtext').value;
+
+            if (!taskHeader || !taskSubtext) {
+                alert('Please enter task header and subtext.');
+                return;
+            }
+
+            const newTask = document.createElement('div');
+            newTask.classList.add('task');
+            newTask.draggable = true;
+            newTask.id = 'task' + (document.querySelectorAll('.task').length + 1);
+            newTask.innerHTML = `
+                <div class="task-header">${taskHeader}</div>
+                <div class="task-subtext">${taskSubtext}</div>
+            `;
+            newTask.addEventListener('dragstart', drag);
+            document.getElementById('todo-column').appendChild(newTask);
+
+            closeModal(); // Close modal after adding task
+            // Clear input fields
+            document.getElementById('taskHeader').value = '';
+            document.getElementById('taskSubtext').value = '';
+        }
+    </script>
+</body>
+</html>

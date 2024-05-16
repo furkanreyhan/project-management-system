@@ -1,0 +1,42 @@
+package com.furkanreyhan.SimpleLogin.jwt;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.Encoders;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.util.Date;
+
+
+@Component
+public class JwtProvider {
+
+    private final String key = "aflmasfafafakjasfasfafacasdasfasxASFACASDFACASDFASFASFDAFASFASDAADSCSDFADCVSGCFVADXCcadwavfsfarvf";
+    SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
+
+    private final long EXPIRES_IN = 3600000;
+
+    public String generateToken(String subject) {
+
+        return Jwts.builder()
+                .setSubject(subject)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRES_IN))
+                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .compact();
+    }
+    public boolean isExpired(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+        return claims.getExpiration().before(new Date(System.currentTimeMillis()));
+    }
+
+    public String getUsernameToken(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+        return claims.getSubject();
+    }
+}
