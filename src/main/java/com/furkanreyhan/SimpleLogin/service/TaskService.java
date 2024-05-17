@@ -26,7 +26,7 @@ public class TaskService {
 
     public Task createOneTask(TaskCreateRequest taskCreateRequest,String jwtToken){
         User user = userService.getUserById(taskCreateRequest.getUserId());
-        if (user != null && jwtProvider.getUsernameToken(jwtToken).equals(user.getUsername())){
+        if (user != null && jwtProvider.getUsernameToken(jwtToken).equals(user.getUsername()) && jwtProvider.validateToken(jwtToken)){
             Task taskToCreate = new Task();
             //taskToCreate.setId(taskCreateRequest.getId());
             taskToCreate.setTitle(taskCreateRequest.getTitle());
@@ -46,7 +46,7 @@ public class TaskService {
         if (task.isPresent()){
             User user = userService.getUserById(task.get().getId());
 
-            if (user!=null && jwtProvider.getUsernameToken(jwtToken).equals(user.getUsername())){
+            if (user!=null && jwtProvider.getUsernameToken(jwtToken).equals(user.getUsername()) && jwtProvider.validateToken(jwtToken)){
                 taskRepository.deleteById(id);
             }
 

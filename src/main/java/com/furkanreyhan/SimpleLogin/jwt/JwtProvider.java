@@ -30,6 +30,16 @@ public class JwtProvider {
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
     }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public boolean isExpired(String token) {
         Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
         return claims.getExpiration().before(new Date(System.currentTimeMillis()));
@@ -39,4 +49,5 @@ public class JwtProvider {
         Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
         return claims.getSubject();
     }
+
 }
