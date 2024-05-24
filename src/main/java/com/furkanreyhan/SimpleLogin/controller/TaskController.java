@@ -2,8 +2,6 @@ package com.furkanreyhan.SimpleLogin.controller;
 
 import com.furkanreyhan.SimpleLogin.entity.Task;
 import com.furkanreyhan.SimpleLogin.entity.TaskCreateRequest;
-import com.furkanreyhan.SimpleLogin.entity.User;
-import com.furkanreyhan.SimpleLogin.jwt.JwtProvider;
 import com.furkanreyhan.SimpleLogin.service.TaskService;
 import com.furkanreyhan.SimpleLogin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +22,11 @@ public class TaskController{
     @PostMapping("/create")
     public Task createTask(@RequestBody TaskCreateRequest taskCreateRequest,
                            @RequestHeader(name = "Authorization") String authorizationHeader){
-
+            //bodyden alma tokendan al id yi
         String jwtToken = authorizationHeader.substring(7);
 
+            //jwt providera kontrol edici 2,3 metod ve onları çağıran 1 metod. buradan o üst metodu çağırabilirsin.
+            //subject,signature vs.
         return taskService.createOneTask(taskCreateRequest,jwtToken);
     }
 

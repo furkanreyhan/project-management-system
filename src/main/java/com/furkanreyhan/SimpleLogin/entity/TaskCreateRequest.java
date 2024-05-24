@@ -3,6 +3,7 @@ package com.furkanreyhan.SimpleLogin.entity;
 public class TaskCreateRequest {
     String title;
     String description;
+    //Taskın atanacağı userId
     Long userId;
 
     public TaskCreateRequest() {

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,13 +25,27 @@ public class TaskService {
         this.userService = userService;
     }
 
+    public List<Task> getTaskList(Long userId){
+        List<Task> taskList;
+        taskList = taskRepository.findByUserId(userId);
+        return taskList;
+    }
+
+    /**
+     * This method ...
+     * @param taskCreateRequest
+     * @param jwtToken
+     * @return
+     */
     public Task createOneTask(TaskCreateRequest taskCreateRequest,String jwtToken){
         User user = userService.getUserById(taskCreateRequest.getUserId());
-        if (user != null && jwtProvider.getUsernameToken(jwtToken).equals(user.getUsername()) && jwtProvider.validateToken(jwtToken)){
+
+
+        if (user != null && jwtProvider.validateToken(jwtToken)){
             Task taskToCreate = new Task();
-            //taskToCreate.setId(taskCreateRequest.getId());
             taskToCreate.setTitle(taskCreateRequest.getTitle());
             taskToCreate.setDescription(taskCreateRequest.getDescription());
+            //taskı vereceğimiz user
             taskToCreate.setUser(user);
             taskToCreate.setDueDate(new Date(7));
             return taskRepository.save(taskToCreate);
@@ -43,13 +58,10 @@ public class TaskService {
 
     public void deleteTaskById(Long id,String jwtToken){
         Optional<Task> task = taskRepository.findById(id);
-        if (task.isPresent()){
-            User user = userService.getUserById(task.get().getId());
-
-            if (user!=null && jwtProvider.getUsernameToken(jwtToken).equals(user.getUsername()) && jwtProvider.validateToken(jwtToken)){
+        if (task.isPresent())
+            if (jwtProvider.validateToken(jwtToken)){
                 taskRepository.deleteById(id);
             }
 
         }
-    }
 }

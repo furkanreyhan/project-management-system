@@ -41,7 +41,6 @@ public class UserController {
                 .body(new ResponseDto(HttpStatus.OK.toString(),"Kayit Basarili"));
     }
 
-    //tokeni string olarak döndürürken sıkıntı yok, responseentity dönünce hata veriyor.
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody User userLogin) {
         boolean isAuthenticated = userService.authenticateUser(userLogin);
@@ -56,6 +55,7 @@ public class UserController {
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", "Bearer " + jwtResponse.getAccessToken());
 
+            //tokenı consoleda görebilmek için
             System.out.println(jwtResponse.getAccessToken());
 
             return new ResponseEntity<>("Giriş Başarılı", headers, HttpStatus.OK);

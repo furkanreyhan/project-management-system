@@ -22,6 +22,10 @@ public class Task {
 
     @Column(name = "dueDate")
     Date dueDate;
+    @ManyToOne
+    @JoinColumn(name = "project_id")
+    @JsonIgnore
+    Project project;
 
     public Task() {
     }

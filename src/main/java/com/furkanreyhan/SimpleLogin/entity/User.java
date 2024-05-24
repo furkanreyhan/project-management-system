@@ -15,7 +15,6 @@ public class User {
     private String email;
     @Column(name = "password")
     private Integer password;
-
     public User() {
     }
 
