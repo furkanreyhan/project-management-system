@@ -1,7 +1,8 @@
 package com.furkanreyhan.SimpleLogin.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -17,10 +18,11 @@ public class User {
     private String email;
     @Column(name = "password")
     private Integer password;
+
     public User() {
     }
 
-    public User(Long id, String username, String email, Integer password) {
+    public User(Long id, String username, String email, Integer password, List<Dummy> dummyList) {
         this.id = id;
         this.username = username;
         this.email = email;

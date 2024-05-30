@@ -31,6 +31,7 @@ public class UserController {
     @PostMapping("/register-user")
     public ResponseEntity<ResponseDto> createUser(@RequestBody User userRegister) {
         User user = new User();
+
         user.setUsername(userRegister.getUsername());
         user.setEmail(userRegister.getEmail());
         user.setPassword(userRegister.getPassword().hashCode());

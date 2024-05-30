@@ -10,4 +10,9 @@ public class UIController {
     public String ui() {
         return "user-reg.html";
     }
+
+    @GetMapping("/main-page")
+    public String mainPage() {
+        return "main.html";
+    }
 }
