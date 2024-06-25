@@ -2,6 +2,8 @@ package com.furkanreyhan.SimpleLogin.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -9,12 +11,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
+
     @Column(name = "username")
     private String username;
+
     @Column(name = "email")
     private String email;
+
     @Column(name = "password")
     private Integer password;
+
+    @ManyToMany(mappedBy = "userList")
+    private List<Project> projects;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> taskList;
+
     public User() {
     }
 
@@ -53,8 +65,16 @@ public class User {
         return password;
     }
 
-    public void setPassword(int password) {
+    public void setPassword(Integer password) {
         this.password = password;
+    }
+
+    public List<Task> getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(List<Task> taskList) {
+        this.taskList = taskList;
     }
 
     @Override

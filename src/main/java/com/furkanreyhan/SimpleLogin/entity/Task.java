@@ -10,22 +10,21 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long id;
+    private Long id;
+
     @Column(name = "title")
-    String title;
+    private String title;
+
     @Column(name = "description")
-    String description;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
-    User user;
+    private User user;
 
     @Column(name = "dueDate")
-    Date dueDate;
-    @ManyToOne
-    @JoinColumn(name = "project_id")
-    @JsonIgnore
-    Project project;
+    private Date dueDate;
 
     public Task() {
     }
