@@ -30,13 +30,6 @@ public class TaskService {
         taskList = taskRepository.findByUserId(userId);
         return taskList;
     }
-
-    /**
-     * This method ...
-     * @param taskCreateRequest
-     * @param jwtToken
-     * @return
-     */
     public Task createOneTask(TaskCreateRequest taskCreateRequest,String jwtToken){
         User user = userService.getUserById(taskCreateRequest.getUserId());
 
